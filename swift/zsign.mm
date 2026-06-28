@@ -201,7 +201,7 @@ int zsign(
 	NSString *bundleversion,
 	bool adhoc,
 	bool excludeprovion,
-	void(^completionHandler)(BOOL success, NSError *error)
+	void(^completionHandler)(BOOL success)
 ) {
 	ZTimer atimer;
 	ZTimer gtimer;
@@ -221,6 +221,7 @@ int zsign(
 	string strEntitleFile;
 	vector<string> arrDylibFiles;
 	vector<string> arrDisDylibFiles;
+	vector<string> arrRemoveDylibNames;
 	
 	strPKeyFile = [key cStringUsingEncoding:NSUTF8StringEncoding];
 	strProvFile = [prov cStringUsingEncoding:NSUTF8StringEncoding];
@@ -247,11 +248,13 @@ int zsign(
 	
 	atimer.Reset();
 	ZBundle bundle;
-	bool bRet = bundle.SignFolder(&zsa, strFolder, strBundleId, strBundleVersion, strDisplayName, arrDylibFiles, bForce, bWeakInject, bEnableCache, excludeprovion);
+	bool bRet = bundle.SignFolder(&zsa, strFolder, strBundleId, strBundleVersion, strDisplayName, arrDylibFiles, arrRemoveDylibNames, bForce, bWeakInject, bEnableCache, excludeprovion);
 	ZLog::PrintV(">>> Signing:\t%s %s\n", strPath.c_str(), (bAdhoc ? " (Ad-hoc)" : ""));
 	atimer.PrintResult(bRet, ">>> Signed %s!", bRet ? "OK" : "Failed");
 	
-	completionHandler(bRet);
+	if (completionHandler) {
+		completionHandler(bRet);
+	}
 	
 	gtimer.Print(">>> Done.");
 	return bRet ? 0 : -1;

@@ -31,31 +31,32 @@ let package = Package(
 			dependencies: [
 				.product(name: "OpenSSL", package: "OpenSSL")
 			],
-			path: "src",
+			path: ".",
 			exclude: [
-				"common/archive.cpp",
-				"zsign.cpp"
+				"src/common/archive.cpp",
+				"src/zsign.cpp"
 			],
 			sources: [
-				"archo.cpp",
-				"bundle.cpp",
-				"macho.cpp",
-				"openssl.cpp",
-				"../swift/utils.mm",
-				"signing.cpp",
-				"../swift/zsign.mm",
-				"common/base64.cpp",
-				"common/fs.cpp",
-				"common/json.cpp",
-				"common/log.cpp",
-				"common/sha.cpp",
-				"common/timer.cpp",
-				"common/util.cpp"
+				"src/archo.cpp",
+				"src/bundle.cpp",
+				"src/macho.cpp",
+				"src/openssl.cpp",
+				"src/signing.cpp",
+				"swift/utils.mm",
+				"swift/zsign.mm",
+				"src/common/base64.cpp",
+				"src/common/fs.cpp",
+				"src/common/json.cpp",
+				"src/common/log.cpp",
+				"src/common/sha.cpp",
+				"src/common/timer.cpp",
+				"src/common/util.cpp"
 			],
-			publicHeadersPath: "include",
+			publicHeadersPath: "src/include",
 			cxxSettings: [
-				.headerSearchPath("."),
-				.headerSearchPath("common"),
+				.headerSearchPath("src"),
+				.headerSearchPath("src/common"),
+				.headerSearchPath("swift"),
 				.unsafeFlags(["-std=c++17"])
 			],
 			linkerSettings: [
@@ -68,6 +69,12 @@ let package = Package(
 				"ZsignC"
 			],
 			path: "swift",
+			exclude: [
+				"utils.hpp",
+				"utils.mm",
+				"zsign.hpp",
+				"zsign.mm"
+			],
 			sources: [
 				"zsign.swift"
 			]
