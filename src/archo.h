@@ -22,6 +22,7 @@ public:
 	bool IsExecute();
 	bool IsSigned() const;
 	bool InjectDylib(bool bWeakInject, const char* szDylibFile);
+	bool AddRPath(const char *szRPath);
 	bool ChangeDylibPath(const char *oldPath, const char *newPath);
 	std::vector<std::string> ListDylibs();
 	void RemoveDylibs(const set<string>& setDylibs);

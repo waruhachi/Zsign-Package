@@ -77,6 +77,33 @@ bool InjectDyLib(NSString *filePath, NSString *dylibPath, bool weakInject) {
 	}
 }
 
+bool AddRPath(NSString *filePath, NSString *rpath) {
+	ZTimer gtimer;
+	@autoreleasepool {
+		std::string filePathStr = [filePath UTF8String];
+		std::string rpathStr = [rpath UTF8String];
+
+		ZMachO machO;
+		bool initSuccess = machO.Init(filePathStr.c_str());
+		if (!initSuccess) {
+			gtimer.Print(">>> Failed to initialize ZMachO.");
+			return false;
+		}
+
+		bool success = machO.AddRPath(rpathStr.c_str());
+
+		machO.Free();
+
+		if (success) {
+			gtimer.Print(">>> RPath added successfully!");
+			return true;
+		} else {
+			gtimer.Print(">>> Failed to add rpath.");
+			return false;
+		}
+	}
+}
+
 bool UninstallDylibs(NSString *filePath, NSArray<NSString *> *dylibPathsArray) {
 	ZTimer gtimer;
 	@autoreleasepool {

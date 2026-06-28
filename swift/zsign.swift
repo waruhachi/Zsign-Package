@@ -23,6 +23,14 @@ public enum Zsign {
 	static public func injectDyLib(appExecutable: String, with path: String, weak: Bool = true) -> Bool {
 		InjectDyLib(appExecutable, path, weak)
 	}
+	/// Adds an LC_RPATH load command to an executable
+	/// - Parameters:
+	///   - appExecutable: Executable
+	///   - path: RPath entry (i.e. `@executable_path/Frameworks`)
+	/// - Returns: True if successful or already present
+	static public func addRPath(appExecutable: String, with path: String) -> Bool {
+		AddRPath(appExecutable, path)
+	}
 	/// Removes load commands from an executable
 	/// - Parameters:
 	///   - appExecutable: Executable

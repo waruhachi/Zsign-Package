@@ -272,6 +272,20 @@ bool ZMachO::InjectDylib(bool bWeakInject, const char* szDylibFile)
 	return true;
 }
 
+bool ZMachO::AddRPath(const char *szRPath) {
+	ZLog::WarnV(">>> AddRPath: %s... \n", szRPath);
+
+	for (size_t i = 0; i < m_arrArchOes.size(); i++) {
+		if (!m_arrArchOes[i]->AddRPath(szRPath)) {
+			ZLog::Error(">>> Failed!\n");
+			return false;
+		}
+	}
+
+	ZLog::Warn(">>> Success!\n");
+	return true;
+}
+
 bool ZMachO::ChangeDylibPath(const char *oldPath, const char *newPath) {
 	ZLog::WarnV(">>> Change DyLib Path: %s -> %s ... \n", oldPath, newPath);
 	

@@ -433,6 +433,12 @@ union lc_str {
 	uint32_t	offset;		/* offset to the string */
 };
 
+struct rpath_command {
+	uint32_t	cmd;		/* LC_RPATH */
+	uint32_t	cmdsize;	/* includes string */
+	union lc_str	path;	/* path to add to run path */
+};
+
 struct dylib {
     union lc_str  	name;			/* library's path name */
     uint32_t 		timestamp;			/* library's build time stamp */

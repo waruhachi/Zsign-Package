@@ -17,6 +17,7 @@ extern "C" {
 
 bool CheckIfSigned(NSString *filePath);
 bool InjectDyLib(NSString *filePath, NSString *dylibPath, bool weakInject);
+bool AddRPath(NSString *filePath, NSString *rpath);
 bool UninstallDylibs(NSString *filePath, NSArray<NSString *> *dylibPathsArray);
 NSArray<NSString *> *ListDylibs(NSString *filePath);
 bool ChangeDylibPath(NSString *filePath, NSString *oldPath, NSString *newPath);

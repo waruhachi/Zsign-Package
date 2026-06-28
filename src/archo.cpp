@@ -697,6 +697,49 @@ bool ZArchO::InjectDylib(bool bWeakInject, const char* szDylibFile)
 	return true;
 }
 
+bool ZArchO::AddRPath(const char *szRPath) {
+	if (NULL == m_pHeader) {
+		return false;
+	}
+
+	uint8_t* pLoadCommand = m_pBase + m_uHeaderSize;
+	for (uint32_t i = 0; i < BO(m_pHeader->ncmds); i++) {
+		load_command* plc = (load_command*)pLoadCommand;
+		if (LC_RPATH == BO(plc->cmd)) {
+			rpath_command* rc = (rpath_command*)pLoadCommand;
+			const char* szExistingRPath = (const char*)(pLoadCommand + BO(rc->path.offset));
+			if (0 == strcmp(szExistingRPath, szRPath)) {
+				return true;
+			}
+		}
+		pLoadCommand += BO(plc->cmdsize);
+	}
+
+	uint32_t uRPathLength = (uint32_t)strlen(szRPath);
+	uint32_t uRPathPadding = (8 - uRPathLength % 8) % 8;
+	uint32_t uRPathCommandSize = sizeof(rpath_command) + uRPathLength + uRPathPadding;
+	if (m_uLoadCommandsFreeSpace > 0 && m_uLoadCommandsFreeSpace < uRPathCommandSize) {
+		ZLog::Error(">>> Can't find free space of LoadCommands for LC_RPATH!\n");
+		return false;
+	}
+
+	rpath_command* rc = (rpath_command*)(m_pBase + m_uHeaderSize + BO(m_pHeader->sizeofcmds));
+	rc->cmd = BO((uint32_t)LC_RPATH);
+	rc->cmdsize = BO(uRPathCommandSize);
+	rc->path.offset = BO((uint32_t)sizeof(rpath_command));
+
+	string strRPath = szRPath;
+	strRPath.append(uRPathPadding, 0);
+
+	uint8_t* pRPath = (uint8_t*)rc + sizeof(rpath_command);
+	memcpy(pRPath, strRPath.data(), strRPath.size());
+
+	m_pHeader->ncmds = BO(BO(m_pHeader->ncmds) + 1);
+	m_pHeader->sizeofcmds = BO(BO(m_pHeader->sizeofcmds) + uRPathCommandSize);
+
+	return true;
+}
+
 void ZArchO::RemoveDylibs(const set<string>& setDylibs)
 {
 	uint8_t* pLoadCommand = m_pBase + m_uHeaderSize;
